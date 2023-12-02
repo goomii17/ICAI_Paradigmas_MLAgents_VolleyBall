@@ -39,7 +39,7 @@ public class VolleyballAgent : Agent
 
         agentRb = GetComponent<Rigidbody>();
         ballRb = ball.GetComponent<Rigidbody>();
-        
+
         // for symmetry between player side
         if (teamId == Team.Blue)
         {
@@ -154,7 +154,7 @@ public class VolleyballAgent : Agent
             dirToGo = (grounded ? 1f : 0.5f) * transform.right * volleyballSettings.speedReductionFactor;
 
         if (jumpAction == 1)
-            if (((jumpingTime <= 0f) && grounded))
+            if ((jumpingTime <= 0f) && grounded)
             {
                 Jump();
             }
@@ -168,7 +168,7 @@ public class VolleyballAgent : Agent
             jumpTargetPos =
                 new Vector3(agentRb.position.x,
                     jumpStartingPos.y + volleyballSettings.agentJumpHeight,
-                    agentRb.position.z) + agentRot*dirToGo;
+                    agentRb.position.z) + agentRot * dirToGo;
 
             MoveTowards(jumpTargetPos, agentRb, volleyballSettings.agentJumpVelocity,
                 volleyballSettings.agentJumpVelocityMaxChange);
@@ -186,7 +186,7 @@ public class VolleyballAgent : Agent
         }
     }
 
- 
+
 
     public override void CollectObservations(VectorSensor sensor)
     {
@@ -194,9 +194,9 @@ public class VolleyballAgent : Agent
         sensor.AddObservation(this.transform.rotation.y);
 
         // Vector from agent to ball (direction to ball) (3 floats)
-        Vector3 toBall = new Vector3((ballRb.transform.position.x - this.transform.position.x)*agentRot, 
+        Vector3 toBall = new Vector3((ballRb.transform.position.x - this.transform.position.x) * agentRot,
         (ballRb.transform.position.y - this.transform.position.y),
-        (ballRb.transform.position.z - this.transform.position.z)*agentRot);
+        (ballRb.transform.position.z - this.transform.position.z) * agentRot);
 
         sensor.AddObservation(toBall.normalized);
 
@@ -208,8 +208,8 @@ public class VolleyballAgent : Agent
 
         // Ball velocity (3 floats)
         sensor.AddObservation(ballRb.velocity.y);
-        sensor.AddObservation(ballRb.velocity.z*agentRot);
-        sensor.AddObservation(ballRb.velocity.x*agentRot);
+        sensor.AddObservation(ballRb.velocity.z * agentRot);
+        sensor.AddObservation(ballRb.velocity.x * agentRot);
     }
 
     // For human controller

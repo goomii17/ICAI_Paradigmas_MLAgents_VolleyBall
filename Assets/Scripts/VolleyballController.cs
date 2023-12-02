@@ -22,6 +22,7 @@ public class VolleyballController : MonoBehaviour
     /// </summary>
     void OnTriggerEnter(Collider other)
     {
+        // Debug.Log("Triggered by " + other.gameObject.tag);
         if (other.gameObject.CompareTag("boundary"))
         {
             // ball went out of bounds
@@ -47,7 +48,16 @@ public class VolleyballController : MonoBehaviour
             // ball hit blue goal (purple side court)
             envController.ResolveEvent(Event.HitBlueGoal);
         }
-
+        else if (other.gameObject.CompareTag("blueAgent"))
+        {
+            // ball hit blue goal (purple side court)
+            envController.ResolveEvent(Event.HitBlueAgent);
+        }
+        else if (other.gameObject.CompareTag("purpleAgent"))
+        {
+            // ball hit blue goal (purple side court)
+            envController.ResolveEvent(Event.HitPurpleAgent);
+        }
     }
 
 

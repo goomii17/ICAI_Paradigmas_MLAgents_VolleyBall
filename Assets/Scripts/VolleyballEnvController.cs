@@ -15,7 +15,9 @@ public enum Event
     HitBlueGoal = 1,
     HitOutOfBounds = 2,
     HitIntoBlueArea = 3,
-    HitIntoPurpleArea = 4
+    HitIntoPurpleArea = 4,
+    HitBlueAgent = 5,
+    HitPurpleAgent = 6
 }
 
 public class VolleyballEnvController : MonoBehaviour
@@ -89,18 +91,21 @@ public class VolleyballEnvController : MonoBehaviour
     {
         switch (triggerEvent)
         {
+            // Small reward for getting the ball out of bounds
             case Event.HitOutOfBounds:
                 if (lastHitter == Team.Blue)
                 {
                     // apply penalty to blue agent
-                    // blueAgent.AddReward(-0.1f);
-                    // purpleAgent.AddReward(0.1f);
+                    // Debug.Log("Rewarding Blue Agent - Out of Bounds: +0.01f");
+                    blueAgent.AddReward(0.01f);
+                    // purpleAgent.AddReward(0.01f);
                 }
                 else if (lastHitter == Team.Purple)
                 {
                     // apply penalty to purple agent
-                    // purpleAgent.AddReward(-0.1f);
-                    // blueAgent.AddReward(0.1f);
+                    // Debug.Log("Rewarding Purple Agent - Out of Bounds: +0.01f");
+                    purpleAgent.AddReward(0.01f);
+                    // blueAgent.AddReward(0.01f);
                 }
 
                 // end episode
@@ -109,10 +114,12 @@ public class VolleyballEnvController : MonoBehaviour
                 ResetScene();
                 break;
 
+            // Reward the agent for winning the rally
             case Event.HitBlueGoal:
                 // blue wins
-                // blueAgent.AddReward(1f);
-                // purpleAgent.AddReward(-1f);
+                // blueAgent.AddReward(2f);
+                // Debug.Log("Penalizing Purple Agent - Hit Blue Goal: -1f");
+                purpleAgent.AddReward(-1f);
 
                 // turn floor blue
                 StartCoroutine(GoalScoredSwapGroundMaterial(volleyballSettings.blueGoalMaterial, RenderersList, .5f));
@@ -123,10 +130,12 @@ public class VolleyballEnvController : MonoBehaviour
                 ResetScene();
                 break;
 
+            // Reward the agent for winning the rally
             case Event.HitPurpleGoal:
                 // purple wins
-                // purpleAgent.AddReward(1f);
-                // blueAgent.AddReward(-1f);
+                // purpleAgent.AddReward(2f);
+                // Debug.Log("Penalizing Blue Agent - Hit Purple Goal: -1f");
+                blueAgent.AddReward(-1f);
 
                 // turn floor purple
                 StartCoroutine(GoalScoredSwapGroundMaterial(volleyballSettings.purpleGoalMaterial, RenderersList, .5f));
@@ -137,18 +146,30 @@ public class VolleyballEnvController : MonoBehaviour
                 ResetScene();
                 break;
 
+            // Reward the agent passed the ball to the other side
             case Event.HitIntoBlueArea:
                 if (lastHitter == Team.Purple)
                 {
-                    purpleAgent.AddReward(1);
+                    // Debug.Log("Rewarding Purple Agent - Hit Into Blue Area: +1f");
+                    purpleAgent.AddReward(1f);
                 }
                 break;
 
             case Event.HitIntoPurpleArea:
                 if (lastHitter == Team.Blue)
                 {
-                    blueAgent.AddReward(1);
+                    // Debug.Log("Rewarding Blue Agent - Hit Into Purple Area: +1f");
+                    blueAgent.AddReward(1f);
                 }
+                break;
+            // If player hit the ball, reward the player
+            case Event.HitBlueAgent:
+                // Debug.Log("Rewarding Blue Agent - Hit Blue Agent: +0.1f");
+                blueAgent.AddReward(.1f);
+                break;
+            case Event.HitPurpleAgent:
+                // Debug.Log("Rewarding Purple Agent - Hit Purple Agent: +0.1f");
+                purpleAgent.AddReward(.1f);
                 break;
         }
     }
@@ -240,5 +261,10 @@ public class VolleyballEnvController : MonoBehaviour
 
         ballRb.angularVelocity = Vector3.zero;
         ballRb.velocity = Vector3.zero;
+
+        // Randomise ball size
+        var randomBallSize = Random.Range(4f, 6f);
+        ball.transform.localScale = new Vector3(randomBallSize, randomBallSize, randomBallSize);
+
     }
 }
